@@ -134,6 +134,14 @@
 </div>
 
 <script>
+    const ACCESS_CODE = "Nira2026"; 
+    const userCode = prompt("Please enter the Access Code to use the Nira Portal:");
+
+    if (userCode !== ACCESS_CODE) {
+        alert("Incorrect code. Access denied.");
+        document.body.innerHTML = "<h1 style='text-align:center; margin-top:100px;'>Unauthorized Access</h1>";
+        throw new Error("Access Denied"); // This stops the rest of the script from running
+    }
     const scriptURL = "https://script.google.com/macros/s/AKfycbzNSyQA96EFZvGoyiL9XR0rJeTn2BFqB3gYqc4KcVuYnwleYFt0EVIvcOIwejRLbtMYgQ/exec";
     let globalInventory = [];
     let globalOutfitCosts = [];
