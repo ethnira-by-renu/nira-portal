@@ -15,40 +15,38 @@
         }
 
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
 
-        /* Navigation Tabs */
         .tabs { display: flex; gap: 10px; margin-bottom: 2rem; border-bottom: 2px solid var(--border); overflow-x: auto; padding-bottom: 5px; }
         .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: none; font-weight: 600; color: #64748b; transition: 0.3s; white-space: nowrap; }
         .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; }
 
-        /* Form Visibility */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Grid System */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1rem; }
         .full-width { grid-column: span 2; }
 
         label { display: block; margin-bottom: 0.4rem; font-size: 0.875rem; font-weight: 600; color: #475569; }
         input, select, textarea { 
             width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; 
-            box-sizing: border-box; font-size: 1rem; transition: border 0.2s;
+            box-sizing: border-box; font-size: 1rem;
         }
-        input:focus { border-color: var(--primary); outline: none; }
-        input[readonly] { background: #f1f5f9; cursor: not-allowed; }
 
-        /* Dynamic Blocks */
         .component-block { border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; background: #fafafa; position: relative; }
         .remove-btn { background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; float: right; font-size: 0.75rem; }
         
-        /* Buttons */
-        .btn-add { background: var(--secondary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 1rem; }
-        .btn-submit { margin-top: 2rem; width: 100%; background: var(--primary); color: white; padding: 1rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 1rem; }
+        .btn-add { background: var(--secondary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-submit { margin-top: 2rem; width: 100%; background: var(--primary); color: white; padding: 1rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
         .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
 
-        /* Summary Sections */
         .summary-box { margin-top: 1rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px; border: 1px solid #dbeafe; }
+
+        /* Gallery Styles */
+        #catalog-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .product-card { border: 1px solid var(--border); border-radius: 12px; padding: 15px; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: #f1f5f9; }
 
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
@@ -60,17 +58,18 @@
         <button class="tab-btn active" onclick="showTab('inventory')">Inventory</button>
         <button class="tab-btn" onclick="showTab('outfit-cost')">Outfit Cost</button>
         <button class="tab-btn" onclick="showTab('outfit-price')">Outfit Price</button>
+        <button class="tab-btn" onclick="showTab('catalog')">Catalog</button>
         <button class="tab-btn" onclick="showTab('investment')">Investment</button>
     </div>
 
     <form id="inventory-form" class="tab-content active">
         <div class="form-grid">
-            <div><label>Fabric ID</label><input type="text" placeholder="Auto-gen on save" readonly></div>
+            <div><label>Fabric ID</label><input type="text" placeholder="Auto-ID" readonly></div>
             <div><label>Date</label><input type="date" class="current-date" required></div>
             <div class="full-width"><label>Fabric Name</label><input type="text" name="fabName" required></div>
-            <div class="full-width"><label>Fabric Photo (Drive)</label><input type="file" accept="image/*"></div>
-            <div><label>Rate per Meter</label><input type="number" id="inv-rate" step="0.01" oninput="calcInvTotal()" required></div>
-            <div><label>Total Meters Taken</label><input type="number" id="inv-meters" step="0.01" oninput="calcInvTotal()" required></div>
+            <div class="full-width"><label>Upload Photo</label><input type="file" accept="image/*"></div>
+            <div><label>Rate/m</label><input type="number" id="inv-rate" step="0.01" oninput="calcInvTotal()" required></div>
+            <div><label>Meters</label><input type="number" id="inv-meters" step="0.01" oninput="calcInvTotal()" required></div>
             <div class="full-width"><label>Total Amount</label><input type="number" id="inv-total" readonly></div>
         </div>
         <button type="submit" class="btn-submit">Add to Inventory</button>
@@ -78,19 +77,19 @@
 
     <form id="outfit-cost-form" class="tab-content">
         <div class="form-grid">
-            <div><label>Outfit ID</label><input type="text" placeholder="Auto-gen on save" readonly></div>
+            <div><label>Outfit ID</label><input type="text" placeholder="Auto-ID" readonly></div>
             <div><label>Date</label><input type="date" class="current-date" required></div>
         </div>
         <div id="component-list">
             <div class="component-block">
                 <button type="button" class="remove-btn" onclick="removeComp(this)">Remove</button>
                 <div class="form-grid">
-                    <div><label>Fabric ID</label><select class="sel-fab" onchange="fetchFabDetails(this)" required><option value="">Select Fabric</option></select></div>
-                    <div><label>Fabric Name</label><input type="text" class="res-name" readonly></div>
-                    <div><label>Rate/m</label><input type="number" class="res-rate" readonly></div>
-                    <div><label>Meters Used</label><input type="number" class="inp-used" step="0.01" oninput="calcComp(this)" required></div>
+                    <div><label>Fabric ID</label><select class="sel-fab" onchange="fetchFabDetails(this)" required><option value="">Select</option></select></div>
+                    <div><label>Name</label><input type="text" class="res-name" readonly></div>
+                    <div><label>Rate</label><input type="number" class="res-rate" readonly></div>
+                    <div><label>Used (m)</label><input type="number" class="inp-used" step="0.01" oninput="calcComp(this)" required></div>
                     <div><label>Stitching</label><input type="number" class="inp-stitch" step="0.01" oninput="calcComp(this)"></div>
-                    <div><label>Component Total</label><input type="number" class="res-comp-total" readonly></div>
+                    <div><label>Total</label><input type="number" class="res-comp-total" readonly></div>
                 </div>
             </div>
         </div>
@@ -101,30 +100,32 @@
 
     <form id="outfit-price-form" class="tab-content">
         <div class="form-grid">
-            <div><label>Select Outfit ID</label><select id="sel-outfit-id" onchange="calculatePriceMargins(this)" required><option value="">Choose ID</option></select></div>
-            <div><label>Total Cost (Fetched)</label><input type="number" id="price-fetch-cost" readonly></div>
+            <div><label>Outfit ID</label><select id="sel-outfit-id" onchange="calculatePriceMargins(this)" required><option value="">Select</option></select></div>
+            <div><label>Cost</label><input type="number" id="price-fetch-cost" readonly></div>
             <div class="full-width"><label>Outfit Name</label><input type="text" name="outfitName" required></div>
-            <div class="full-width"><label>Outfit Photo</label><input type="file" accept="image/*"></div>
+            <div class="full-width"><label>Upload Final Outfit Photo</label><input type="file" accept="image/*"></div>
         </div>
         <div class="summary-box form-grid">
-            <div><label>50% Profit Price (x2)</label><input type="number" id="p50" readonly></div>
-            <div><label>60% Profit Price (/0.4)</label><input type="number" id="p60" readonly></div>
-            <div><label>Final Price</label><input type="number" id="final-price" step="0.01" required></div>
-            <div><label>20% Off Discount Price</label><input type="number" id="p-disc" readonly></div>
+            <div><label>50% Margin</label><input type="number" id="p50" readonly></div>
+            <div><label>60% Margin</label><input type="number" id="p60" readonly></div>
+            <div><label>Set Final Price</label><input type="number" id="final-price" step="0.01" required></div>
+            <div><label>20% Off Price</label><input type="number" id="p-disc" readonly></div>
         </div>
         <button type="submit" class="btn-submit">Set Pricing</button>
     </form>
+
+    <div id="catalog-form" class="tab-content">
+        <div id="catalog-gallery">
+            </div>
+    </div>
 
     <form id="investment-form" class="tab-content">
         <div class="form-grid">
             <div><label>Date</label><input type="date" class="current-date" required></div>
             <div><label>Category</label><select name="category" required>
-                <option value="fabric">Fabric</option>
-                <option value="shoot">Shoot</option>
-                <option value="ad">Ad</option>
-                <option value="delivery">Delivery</option>
-                <option value="stitching">Stitching</option>
-                <option value="others">Others</option>
+                <option value="fabric">Fabric</option><option value="shoot">Shoot</option>
+                <option value="ad">Ad</option><option value="delivery">Delivery</option>
+                <option value="stitching">Stitching</option><option value="others">Others</option>
             </select></div>
             <div class="full-width"><label>Description</label><textarea name="description" rows="3"></textarea></div>
             <div class="full-width"><label>Amount</label><input type="number" name="amount" step="0.01" required></div>
@@ -134,29 +135,30 @@
 </div>
 
 <script>
+    // --- AUTH ---
     const ACCESS_CODE = "Nira2026"; 
-    const userCode = prompt("Please enter the Access Code to use the Nira Portal:");
-
+    const userCode = prompt("Nira by Ethnira Access Code:");
     if (userCode !== ACCESS_CODE) {
-        alert("Incorrect code. Access denied.");
-        document.body.innerHTML = "<h1 style='text-align:center; margin-top:100px;'>Unauthorized Access</h1>";
-        throw new Error("Access Denied"); // This stops the rest of the script from running
+        alert("Access Denied.");
+        document.body.innerHTML = "<h1 style='text-align:center; margin-top:50px;'>Unauthorized</h1>";
+        throw new Error("Auth Failure");
     }
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzNSyQA96EFZvGoyiL9XR0rJeTn2BFqB3gYqc4KcVuYnwleYFt0EVIvcOIwejRLbtMYgQ/exec";
-    let globalInventory = [];
-    let globalOutfitCosts = [];
 
-    // --- INITIALIZATION ---
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwDMuM6eH_KsvK6yJagw4XmOZpMbYy3umChO3SxSWd7Yzpe5KNiOf1TI3Nx6fFiFxj7Xg/exec";
+    let globalInventory = [], globalOutfitCosts = [], globalOutfitPrices = [];
+
     document.querySelectorAll('.current-date').forEach(el => el.valueAsDate = new Date());
-    
+
     async function refreshData() {
         try {
-            const response = await fetch(scriptURL);
-            const data = await response.json();
-            globalInventory = data.inventory;
-            globalOutfitCosts = data.outfitCosts;
+            const r = await fetch(scriptURL);
+            const d = await r.json();
+            globalInventory = d.inventory;
+            globalOutfitCosts = d.outfitCosts;
+            globalOutfitPrices = d.outfitPrices;
             updateDropdowns();
-        } catch (e) { console.error("Data Sync Failed", e); }
+            renderGallery();
+        } catch (e) { console.error("Sync Error", e); }
     }
     refreshData();
 
@@ -167,77 +169,76 @@
         event.currentTarget.classList.add('active');
     }
 
-    // --- CALCULATIONS ---
+    function renderGallery() {
+        const gallery = document.getElementById('catalog-gallery');
+        gallery.innerHTML = globalOutfitPrices.length ? '' : '<p style="grid-column: 1/-1; text-align: center;">No catalog entries found.</p>';
+        globalOutfitPrices.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <img src="${item[2] || 'https://via.placeholder.com/300'}" alt="Outfit">
+                <h3>${item[1]}</h3>
+                <p style="color:#64748b; font-size:0.8rem;">ID: ${item[0]}</p>
+                <div style="display:flex; justify-content:space-around; border-top: 1px dashed #eee; padding-top:10px;">
+                    <div><small>Retail</small><br><b>₹${item[6]}</b></div>
+                    <div><small>Offer</small><br><b style="color:var(--danger);">₹${item[7]}</b></div>
+                </div>`;
+            gallery.appendChild(card);
+        });
+    }
+
+    function updateDropdowns() {
+        document.querySelectorAll('.sel-fab').forEach(s => {
+            s.innerHTML = '<option value="">Select Fabric</option>';
+            globalInventory.forEach(row => s.add(new Option(`${row[0]} - ${row[2]}`, row[0])));
+        });
+        const outSel = document.getElementById('sel-outfit-id');
+        const uniqueOutfits = [...new Set(globalOutfitCosts.map(r => r[0].toString()))];
+        outSel.innerHTML = '<option value="">Select ID</option>';
+        uniqueOutfits.forEach(id => outSel.add(new Option(id, id)));
+    }
+
+    // Calculations
     function calcInvTotal() {
         const r = document.getElementById('inv-rate').value || 0;
         const m = document.getElementById('inv-meters').value || 0;
         document.getElementById('inv-total').value = (r * m).toFixed(2);
     }
-
     function fetchFabDetails(s) {
         const row = s.closest('.form-grid');
-        const fab = globalInventory.find(item => item[0].toString() === s.value);
-        if(fab) {
-            row.querySelector('.res-name').value = fab[2];
-            row.querySelector('.res-rate').value = fab[4];
-        }
+        const fab = globalInventory.find(i => i[0].toString() === s.value);
+        if(fab) { row.querySelector('.res-name').value = fab[2]; row.querySelector('.res-rate').value = fab[4]; }
         calcComp(s);
     }
-
     function calcComp(e) {
         const row = e.closest('.form-grid');
         const total = (parseFloat(row.querySelector('.res-rate').value) || 0) * (parseFloat(row.querySelector('.inp-used').value) || 0) + (parseFloat(row.querySelector('.inp-stitch').value) || 0);
         row.querySelector('.res-comp-total').value = total.toFixed(2);
-        updateGT();
+        let gt = 0; document.querySelectorAll('.res-comp-total').forEach(i => gt += parseFloat(i.value) || 0);
+        document.getElementById('gt-display').innerText = gt.toFixed(2);
     }
-
-    function updateGT() {
-        let total = 0;
-        document.querySelectorAll('.res-comp-total').forEach(i => total += parseFloat(i.value) || 0);
-        document.getElementById('gt-display').innerText = total.toFixed(2);
-    }
-
     function calculatePriceMargins(s) {
-        // Sum all rows in OutfitCost sheet matching this ID
-        const totalCost = globalOutfitCosts
-            .filter(row => row[0].toString() === s.value)
-            .reduce((sum, row) => sum + (parseFloat(row[7]) || 0), 0);
-        
+        const totalCost = globalOutfitCosts.filter(r => r[0].toString() === s.value).reduce((sum, r) => sum + (parseFloat(r[7]) || 0), 0);
         document.getElementById('price-fetch-cost').value = totalCost.toFixed(2);
         document.getElementById('p50').value = (totalCost * 2).toFixed(2);
-        const p60Value = (totalCost / 0.4).toFixed(2);
-        document.getElementById('p60').value = p60Value;
-        document.getElementById('final-price').value = p60Value;
+        document.getElementById('p60').value = (totalCost / 0.4).toFixed(2);
+        document.getElementById('final-price').value = (totalCost / 0.4).toFixed(2);
         document.getElementById('p-disc').value = (totalCost * 2).toFixed(2);
     }
 
-    // --- FORM SUBMISSION ---
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+    const toBase64 = f => new Promise((res, rej) => {
+        const r = new FileReader(); r.readAsDataURL(f); r.onload = () => res(r.result); r.onerror = e => rej(e);
     });
 
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = form.querySelector('.btn-submit');
-            btn.innerText = "Uploading to Nira...";
-            btn.disabled = true;
+            btn.innerText = "Syncing..."; btn.disabled = true;
+            const payload = { sheetName: form.id.replace('-form', '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(''), date: form.querySelector('.current-date')?.value };
+            const fInp = form.querySelector('input[type="file"]');
+            if (fInp?.files[0]) { payload.photoData = await toBase64(fInp.files[0]); payload.photoName = fInp.files[0].name; }
 
-            const payload = {
-                sheetName: form.id.replace('-form', '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(''),
-                date: form.querySelector('.current-date')?.value
-            };
-
-            const fileInput = form.querySelector('input[type="file"]');
-            if (fileInput?.files[0]) {
-                payload.photoData = await toBase64(fileInput.files[0]);
-                payload.photoName = fileInput.files[0].name;
-            }
-
-            // Field Mapping
             if (form.id === 'inventory-form') {
                 payload.name = form.querySelector('[name="fabName"]').value;
                 payload.rate = document.getElementById('inv-rate').value;
@@ -245,12 +246,7 @@
                 payload.total = document.getElementById('inv-total').value;
             } else if (form.id === 'outfit-cost-form') {
                 payload.components = Array.from(document.querySelectorAll('.component-block')).map(b => ({
-                    fabId: b.querySelector('select').value,
-                    fabName: b.querySelector('.res-name').value,
-                    rate: b.querySelector('.res-rate').value,
-                    used: b.querySelector('.inp-used').value,
-                    stitching: b.querySelector('.inp-stitch').value,
-                    total: b.querySelector('.res-comp-total').value
+                    fabId: b.querySelector('select').value, fabName: b.querySelector('.res-name').value, rate: b.querySelector('.res-rate').value, used: b.querySelector('.inp-used').value, stitching: b.querySelector('.inp-stitch').value, total: b.querySelector('.res-comp-total').value
                 }));
             } else if (form.id === 'outfit-price-form') {
                 payload.outfitId = document.getElementById('sel-outfit-id').value;
@@ -267,14 +263,10 @@
             }
 
             try {
-                const res = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
-                const out = await res.json();
-                if(out.status === 'success') {
-                    alert("Saved! Assigned ID: " + out.id);
-                    form.reset();
-                    refreshData();
-                }
-            } catch (err) { alert("Submission failed. Check console."); console.error(err); }
+                const r = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
+                const res = await r.json();
+                if(res.status === 'success') { alert("Saved! ID: " + res.id); form.reset(); refreshData(); }
+            } catch (err) { alert("Error."); console.error(err); }
             finally { btn.innerText = "Save Record"; btn.disabled = false; }
         });
     });
@@ -285,28 +277,7 @@
         clone.querySelectorAll('input').forEach(i => i.value = '');
         list.appendChild(clone);
     }
-    function removeComp(b) { if(document.querySelectorAll('.component-block').length > 1) b.closest('.component-block').remove(); updateGT(); }
-
-    function updateDropdowns() {
-        // Update Fabric Dropdowns
-        document.querySelectorAll('.sel-fab').forEach(sel => {
-            const currentVal = sel.value;
-            sel.innerHTML = '<option value="">Select Fabric</option>';
-            globalInventory.forEach(row => {
-                const opt = new Option(`${row[0]} - ${row[2]}`, row[0]);
-                sel.add(opt);
-            });
-            sel.value = currentVal;
-        });
-
-        // Update Outfit ID Dropdown
-        const outSel = document.getElementById('sel-outfit-id');
-        const uniqueOutfits = [...new Set(globalOutfitCosts.map(row => row[0].toString()))];
-        outSel.innerHTML = '<option value="">Choose ID</option>';
-        uniqueOutfits.forEach(id => {
-            outSel.add(new Option(id, id));
-        });
-    }
+    function removeComp(b) { if(document.querySelectorAll('.component-block').length > 1) b.closest('.component-block').remove(); }
 </script>
 </body>
 </html>
