@@ -170,22 +170,35 @@
     }
 
     function renderGallery() {
-        const gallery = document.getElementById('catalog-gallery');
-        gallery.innerHTML = globalOutfitPrices.length ? '' : '<p style="grid-column: 1/-1; text-align: center;">No catalog entries found.</p>';
-        globalOutfitPrices.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <img src="${item[2] || 'https://via.placeholder.com/300'}" alt="Outfit">
-                <h3>${item[1]}</h3>
-                <p style="color:#64748b; font-size:0.8rem;">ID: ${item[0]}</p>
-                <div style="display:flex; justify-content:space-around; border-top: 1px dashed #eee; padding-top:10px;">
-                    <div><small>Retail</small><br><b>₹${item[6]}</b></div>
-                    <div><small>Offer</small><br><b style="color:var(--danger);">₹${item[7]}</b></div>
-                </div>`;
-            gallery.appendChild(card);
-        });
-    }
+    const gallery = document.getElementById('catalog-gallery');
+    gallery.innerHTML = globalOutfitPrices.length ? '' : '<p style="grid-column: 1/-1; text-align: center;">No catalog entries found.</p>';
+    
+    globalOutfitPrices.forEach(item => {
+        // This logic converts a standard Drive link into a direct viewable image
+        let rawUrl = item[2] || '';
+        let displayUrl = 'https://via.placeholder.com/300?text=No+Image';
+        
+        if (rawUrl.includes('id=')) {
+            const id = rawUrl.split('id=')[1].split('&')[0];
+            displayUrl = `https://lh3.googleusercontent.com/u/0/d/${id}`;
+        } else if (rawUrl.includes('/d/')) {
+            const id = rawUrl.split('/d/')[1].split('/')[0];
+            displayUrl = `https://lh3.googleusercontent.com/u/0/d/${id}`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${displayUrl}" alt="Outfit" onerror="this.src='https://via.placeholder.com/300?text=Link+Issue'">
+            <h3>${item[1]}</h3>
+            <p style="color:#64748b; font-size:0.8rem;">ID: ${item[0]}</p>
+            <div style="display:flex; justify-content:space-around; border-top: 1px dashed #eee; padding-top:10px;">
+                <div><small>Retail</small><br><b>₹${item[6]}</b></div>
+                <div><small>Offer</small><br><b style="color:var(--danger);">₹${item[7]}</b></div>
+            </div>`;
+        gallery.appendChild(card);
+    });
+}
 
     function updateDropdowns() {
         document.querySelectorAll('.sel-fab').forEach(s => {
